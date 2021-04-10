@@ -1,0 +1,76 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>中介信息标注</title>
+    <meta name="description" content="中介标注">
+    <meta name="author" content="潮戒">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="flex flex-col p-2 mx-4 max-w-md mx-auto bg-white text-center">
+        <div class="py-12 text-lg font-medium text-black">中介信息标注</div>
+        <div class="p-8 rounded-xl shadow-md">
+            <div class="py-2 text-center">{{ rent.title }}</div>
+            <div class="py-2 text-center text-gray-400 text-sm"><a
+                    href="{{ rent.origin_url }}" target="_blank">{{ rent.origin_url }}</a></div>
+            <div class="py-2 text-center">
+                <span class="text-gray-400">author</span></span>:
+                <a href="{{ rent.author_url }}" target="_blank">{{rent.author}}</a></div>
+            <div id="rent_cid" style="display: none;">{{ rent.cid }}</div>
+            <p class="">
+                {{ rent.content }}
+            </p>
+        </div>
+        <div class="pt-6 text-gray-400 text-sm">还有 {{ no_mark }} 数据未标注</div>
+
+        <div class="flex pt-8">
+            <button onClick="rent_classify(1)" class="flex-1 mx-4 px-6 py-1
+                        text-sm text-purple-600 font-semibold
+                        rounded-full border border-purple-200
+                        hover:text-white hover:bg-purple-600 hover:border-transparent
+                        focus:outline-none
+                        ">是中介
+            </button>
+            <button onClick="rent_classify(0)" class="flex-1 mx-4 px-6 py-1
+                        text-sm text-purple-600 font-semibold
+                        rounded-full border border-purple-200
+                        hover:text-white hover:bg-purple-600 hover:border-transparent
+                        focus:outline-none
+                        ">不是中介
+            </button>
+        </div>
+
+    </div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        function rent_classify(classify) {
+            var cid = document.getElementById("rent_cid").innerText;
+
+            let data = {
+                "cid": cid,
+                "classify": classify
+            };
+            axios.put("/" + cid, data)
+                .then(function (rsp) {
+                    console.log(rsp);
+                    var rent = rsp.data;
+                    if (rent["classify"] == classify) {
+                        // refresh
+                        window.location.reload(true);
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+    </script>
+</body>
+
+</html>
